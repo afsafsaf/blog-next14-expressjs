@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.7.1",
+    "@prisma/client": "^5.15.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
@@ -41,7 +41,7 @@
     "@types/nodemailer": "^6.4.15",
     "@types/supertest": "^6.0.2",
     "jest-mock-extended": "^3.0.7",
-    "prisma": "^5.7.1",
+    "prisma": "^5.15.0",
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0"
   }
