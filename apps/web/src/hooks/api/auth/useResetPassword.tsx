@@ -1,56 +1,58 @@
 'use client';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { axiosInstance } from '@/lib/axios';
 import { useAppDispatch } from '@/redux/hooks';
 import { loginAction } from '@/redux/slices/userSlice';
 import { User } from '@/types/user.type';
 import { AxiosError } from 'axios';
-import { Terminal } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-interface ForgotPasswordResponse {
+interface ResetPasswordResponse {
   message: string;
 }
-const useForgotPassword = () => {
+const useResetPassword = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const forgotPassword = async (email: string) => {
+  const resetPassword = async (password: string, token: string) => {
     try {
       setIsLoading(true);
-      const { data } = await axiosInstance.post<ForgotPasswordResponse>(
-        '/auth/forgot-password',
-        { email },
+      const { data } = await axiosInstance.patch<ResetPasswordResponse>(
+        '/auth/reset-password',
+        { password },
+        {
+          headers: {
+            Authorization: `Bearer${token}`,
+          },
+        },
       );
-
       alert(data.message);
 
-      router.replace('/login'); // Mengarahkan pengguna ke halaman home
-
-      toast.success('Reset password has been sent to your email', {
+      router.replace('/login'); // Mengarahkan pengguna ke halaman login
+      toast.success('Reset Password Success', {
         position: 'top-right',
         autoClose: 2000,
       });
     } catch (error) {
       //toast error massge jika password salah
       if (error instanceof AxiosError) {
-        toast.error('Email does not exist', {
-          position: 'top-right',
-          autoClose: 2000,
-        });
+        // toast.error('Password can not be changed', {
+        //   position: 'top-right',
+        //   autoClose: 2000,
+        // });
+        alert(error?.response?.data?.message);
       }
     } finally {
       setIsLoading(false);
     }
   };
-  return { forgotPassword, isLoading };
+  return { resetPassword, isLoading };
 };
 
-export default useForgotPassword;
+export default useResetPassword;
 
 // axiosInstance.post('/auth/login', payload): Mengirimkan permintaan HTTP POST ke endpoint /auth/login dengan payload sebagai badan (body) permintaan. payload berisi informasi login, seperti email dan password.
 
