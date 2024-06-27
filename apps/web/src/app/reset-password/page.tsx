@@ -5,22 +5,30 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFormik } from 'formik';
 import React from 'react';
-import { validationSchema } from './validationSchema';
-import useLogin from '@/hooks/api/auth/useLogin';
-import { useRouter } from 'next/navigation';
 
-const Login = () => {
-  const router = useRouter();
-  const { Login } = useLogin();
+import { Loader2 } from 'lucide-react';
+import { validationSchema } from './validationSchema';
+import { notFound, useSearchParams } from 'next/navigation';
+import useResetPassword from '@/hooks/api/auth/useResetPassword';
+
+const ResetPassword = () => {
+  // untuk menangkap query kita menggunakan serachparams
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token'); //mencari params yang tulisannya token
+
+  if (!token) {
+    notFound();
+  }
+  const { resetPassword, isLoading } = useResetPassword();
   const { errors, handleBlur, handleSubmit, handleChange, touched, values } =
     useFormik({
       initialValues: {
-        email: '',
         password: '',
+        confirmPassword: '',
       },
       validationSchema,
-      onSubmit: (values) => {
-        Login(values);
+      onSubmit: ({ password }) => {
+        resetPassword(password, token);
       },
     });
   return (
@@ -30,23 +38,12 @@ const Login = () => {
           <Card className="w-[450px]">
             <CardHeader>
               <CardTitle className="text-center text-3xl text-primary">
-                Login
+                Reset Password
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit}>
                 <div className="grid w-full items-center gap-4">
-                  <FormInput
-                    name="email"
-                    type="email"
-                    label="Email"
-                    placeholder="Email"
-                    value={values.email}
-                    error={errors.email}
-                    isError={!!touched.email && !!errors.email}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
                   <FormInput
                     name="password"
                     type="password"
@@ -58,15 +55,28 @@ const Login = () => {
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                   />
-                  <p
-                    className="text-end text-xs cursor-pointer italic"
-                    onClick={() => router.push('/forgot-password')}
-                  >
-                    Forgot Password?
-                  </p>
+                  <FormInput
+                    name="confirmPassword"
+                    type="password"
+                    label="Confirm Password"
+                    placeholder="Confirm Password"
+                    value={values.confirmPassword}
+                    error={errors.confirmPassword}
+                    isError={
+                      !!touched.confirmPassword && !!errors.confirmPassword
+                    }
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                  />
                 </div>
 
-                <Button className="mt-6 w-full">Register</Button>
+                {/* Kalau sedang loading, maka buttonnya akan ke desible */}
+                <Button className="mt-6 w-full" disabled={isLoading}>
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Submit
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -76,4 +86,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;
