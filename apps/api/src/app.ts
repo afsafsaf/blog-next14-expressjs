@@ -5,11 +5,14 @@ import express, {
   Request,
   Response,
   NextFunction,
+  static as static_
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
 import { SampleRouter } from './routers/sample.router';
 import { AuthRouter } from './routers/auth.router';
+import { BlogRouter } from './routers/blog.router';
+import { join } from 'path';
 
 export default class App {
   readonly app: Express;
@@ -24,7 +27,8 @@ export default class App {
   private configure(): void {
     this.app.use(cors());
     this.app.use(json());
-    this.app.use(urlencoded({ extended: true }));
+    this.app.use(urlencoded({ extended: true })); //untuk membaca form data
+    this.app.use('/api/assets', static_(join(__dirname, '../public')))
   }
 
   private handleError(): void {
@@ -53,6 +57,8 @@ export default class App {
   private routes(): void {
     const sampleRouter = new SampleRouter();
     const authRouter = new AuthRouter();
+    const blogRouter = new BlogRouter;
+
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Welcome to my BLOG API !`);
@@ -60,6 +66,7 @@ export default class App {
 
     this.app.use('/api/samples', sampleRouter.getRouter());
     this.app.use('/api/auth', authRouter.getRouter());
+    this.app.use('/api/blogs', blogRouter.getRouter());
   }
 
   public start(): void {
