@@ -25,6 +25,7 @@ const Navbar = () => {
           {Boolean(id) ? (
             <div className="flex items-center gap-8">
               <h3
+                className="cursor-pointer"
                 onClick={() => {
                   router.push('/');
                 }}
@@ -33,9 +34,9 @@ const Navbar = () => {
               </h3>
               <h3
                 className="cursor-pointer"
-                onClick={() => router.push('/write')}
+                onClick={() => router.push('/create-blog')}
               >
-                Write
+                Create Blog
               </h3>
               <h3
                 className="cursor-pointer"

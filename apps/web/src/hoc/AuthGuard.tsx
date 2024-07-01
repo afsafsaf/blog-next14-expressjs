@@ -17,7 +17,7 @@ export default function AuthGuard(Component: any) {
     });
 
     useEffect(() => {
-      if (!id && !false) {
+      if (!id && !isLoading) {
         redirect('/login');
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
